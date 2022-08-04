@@ -1,0 +1,22 @@
+# 选择编译镜像
+FROM golang:1.18
+
+# 创建工作目录
+WORKDIR /go/src/app
+
+# 安装依赖
+RUN go mod init \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/Shopify/sarama \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/gin-gonic/gin \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/garyburd/redigo/redis \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/dgrijalva/jwt-go \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/bitly/go-simplejson \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/lib/pq \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/jmoiron/sqlx \
+&& GOPROXY="https://goproxy.cn" GO111MODULE=on go get -v github.com/timest/env 
+
+# 修改时区
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# 编译基础包
+# docker build -f Dockerfile_go_base -t explorer_go_base:dev .

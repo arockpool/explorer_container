@@ -1,0 +1,802 @@
+version: "3"
+services: 
+  ####################### api
+  explorer_api:
+    build: 
+      context: .
+      dockerfile: Dockerfile_api
+    command: ./api
+    restart: always
+    container_name: explorer_api
+    ports:
+      - "13000:8000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### account
+  explorer_s_account:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_account/gunicorn.conf.py explorer_s_account.wsgi:application
+    restart: always
+    container_name: xm-s-account
+    ports:
+      - "13010:10010"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_account:/www/explorer_s_account:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### profile
+  explorer_s_profile:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_profile/gunicorn.conf.py explorer_s_profile.wsgi:application
+    restart: always
+    container_name: xm-s-profile
+    ports:
+      - "13020:10020"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_profile:/www/explorer_s_profile:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### system
+  explorer_s_system:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_system/gunicorn.conf.py explorer_s_system.wsgi:application
+    restart: always
+    container_name: xm-s-system
+    ports:
+      - "13030:10030"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_system:/www/explorer_s_system:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### activity
+  explorer_s_activity:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_activity/gunicorn.conf.py explorer_s_activity.wsgi:application
+    restart: always
+    container_name: xm-s-activity
+    ports:
+      - "13040:10040"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_activity:/www/explorer_s_activity:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### pool
+  explorer_s_pool:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_pool/gunicorn.conf.py explorer_s_pool.wsgi:application
+    restart: always
+    container_name: xm-s-pool
+    ports:
+      - "13050:10050"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_pool:/www/explorer_s_pool:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### explorer_s_explorer
+  explorer_s_explorer:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_explorer/gunicorn.conf.py --timeout  120 explorer_s_explorer.wsgi:application
+    restart: always
+    container_name: xm-s-explorer
+    ports:
+      - "13060:10060"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_explorer:/www/explorer_s_explorer:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+ ####################### explorer_s_explorer_v2
+  explorer_s_explorer_v2:
+    build: 
+      context: .
+      dockerfile: Dockerfile_python_explorer
+    command: gunicorn -c explorer_s_explorer_v2/gunicorn.conf.py --timeout  120 start:app
+    restart: always
+    container_name: xm-s-explorer-v2
+    ports:
+      - "13061:10061"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_explorer_v2:/www/explorer_s_explorer_v2:cached
+    networks:
+      - dev_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+
+  ####################### explorer_s_data
+  explorer_s_data:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_data/gunicorn.conf.py explorer_s_data.wsgi:application
+    restart: always
+    container_name: xm-s-data
+    ports:
+      - "13070:10070"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_data:/www/explorer_s_data:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### explorer_s_sector
+  explorer_s_sector:
+    image: explorer_python_base:dev
+    command: gunicorn -c explorer_s_sector/gunicorn.conf.py explorer_s_sector.wsgi:application
+    restart: always
+    container_name: xm-s-sector
+    ports:
+      - "13080:10080"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_sector:/www/explorer_s_sector:cached
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### h5
+  # explorer_h5:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile_h5
+  #   command: pm2-runtime /app/backend/pm2.json
+  #   restart: always
+  #   container_name: explorer_h5
+  #   ports:
+  #     - "13001:3000"
+  #   env_file:
+  #     - dev.env
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+
+  ####################### web
+  explorer_web:
+    build: 
+      context: .
+      dockerfile: Dockerfile_web
+    command: pm2-runtime start npm --name "explorer_web" -- run start 
+    restart: always
+    container_name: explorer_web
+    ports:
+      - "13002:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_web_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/explorer_web
+    command: npm run dev
+    restart: always
+    container_name: explorer_web_dev
+    ports:
+      - "13002:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer_web:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### admin
+  explorer_admin:
+    build: 
+      context: .
+      dockerfile: Dockerfile_admin
+    command: pm2-runtime start npm --name "explorer_admin" -- run start 
+    restart: always
+    container_name: explorer_admin
+    ports:
+      - "13003:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_admin_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/arockpool_admin
+    command: npm run dev
+    restart: always
+    container_name: explorer_admin_dev
+    ports:
+      - "13003:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./arockpool_admin:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  
+  ####################### 浏览器
+  explorer_explorer:
+    build: 
+      context: .
+      dockerfile: Dockerfile_explorer
+    command: pm2-runtime start npm --name "explorer_explorer" -- run start 
+    restart: always
+    container_name: explorer_explorer
+    ports:
+      - "13004:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_explorer_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/explorer_explorer
+    command: npm run dev
+    restart: always
+    container_name: explorer_explorer_dev
+    ports:
+      - "13004:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./explorer:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### user管理后台
+  explorer_user:
+    build: 
+      context: .
+      dockerfile: Dockerfile_user
+    command: pm2-runtime start npm --name "explorer_user" -- run start 
+    restart: always
+    container_name: explorer_user
+    ports:
+      - "13005:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_user_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/arockpool_miner
+    command: npm run dev
+    restart: always
+    container_name: explorer_user_dev
+    ports:
+      - "13005:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./arockpool_miner:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  
+  # ####################### fil计算器
+  # explorer_calculator:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile_calculator
+  #   command: pm2-runtime start npm --name "explorer_calculator" -- run start 
+  #   restart: always
+  #   container_name: explorer_calculator
+  #   ports:
+  #     - "13006:3000"
+  #   env_file:
+  #     - dev.env
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+  # explorer_calculator_dev:
+  #   build: 
+  #     context: .
+  #     dockerfile: dockerfile_dev/explorer_calculator
+  #   command: npm run dev
+  #   restart: always
+  #   container_name: explorer_calculator_dev
+  #   ports:
+  #     - "13006:3000"
+  #   env_file:
+  #     - dev.env
+  #   volumes:
+  #     - ./arockpool_calculator:/app:cached
+  #     - /app/node_modules
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+
+  ####################### fil经济模型
+  explorer_economy_model:
+    build: 
+      context: .
+      dockerfile: Dockerfile_economy_model
+    command: pm2-runtime start npm --name "explorer_economy_model" -- run start 
+    restart: always
+    container_name: explorer_economy_model
+    ports:
+      - "13007:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_economy_model_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/arockpool_e_model
+    command: npm run dev
+    restart: always
+    container_name: explorer_economy_model_dev
+    ports:
+      - "13007:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./arockpool_e_model:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### dashboard
+  explorer_dashboard:
+    build: 
+      context: .
+      dockerfile: Dockerfile_dashboard
+    command: pm2-runtime start npm --name "explorer_dashboard" -- run start 
+    restart: always
+    container_name: explorer_dashboard
+    ports:
+      - "13008:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_dashboard_dev:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/arockpool_dashboard
+    command: npm run dev
+    restart: always
+    container_name: explorer_dashboard_dev
+    ports:
+      - "13008:3000"
+    env_file:
+      - dev.env
+    volumes:
+      - ./arockpool_dashboard:/app:cached
+      - /app/node_modules
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ####################### 浏览器后台
+  explorer_explorer_admin:
+    build: 
+      context: .
+      dockerfile: Dockerfile_explorer_admin
+    command: pm2-runtime start npm --name "explorer_explorer_admin" -- run start 
+    restart: always
+    container_name: explorer_explorer_admin
+    ports:
+      - "13009:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+        
+  ####################### arockpool_static_web
+  arockpool_static_web:
+    build: 
+      context: .
+      dockerfile: dockerfile_dev/arockpool_static_web
+    command: pm2-runtime start npm --name "arockpool_static_web" -- run start 
+    restart: always
+    container_name: arockpool_static_web
+    ports:
+      - "13999:3000"
+    env_file:
+      - dev.env
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  # ####################### arockpool_static_web
+  # bh_static_web:
+  #   build: 
+  #     context: .
+  #     dockerfile: dockerfile_dev/bh_static_web
+  #   command: pm2-runtime start npm --name "bh_static_web" -- run start 
+  #   restart: always
+  #   container_name: bh_static_web
+  #   ports:
+  #     - "13998:3000"
+  #   env_file:
+  #     - dev.env
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+
+  # ####################### sector_web
+  # explorer_sector_web:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile_sector_web
+  #   command: pm2-runtime start npm --name "sector_web" -- run start 
+  #   restart: always
+  #   container_name: sector_web
+  #   ports:
+  #     - "13997:3000"
+  #   env_file:
+  #     - dev.env
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+
+  # ####################### sector_admin
+  # explorer_sector_admin:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile_sector_admin
+  #   command: pm2-runtime start npm --name "sector_admin" -- run start 
+  #   restart: always
+  #   container_name: sector_admin
+  #   ports:
+  #     - "13996:3000"
+  #   env_file:
+  #     - dev.env
+  #   networks:
+  #     - dev_network
+  #   logging: 
+  #     driver: "json-file"
+  #     options: 
+  #       max-size: "500m"
+
+  ######################## kafka
+  explorer_zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: explorer_zookeeper
+    restart: always
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  explorer_kafka:
+    image: wurstmeister/kafka:2.12-2.4.1
+    container_name: explorer_kafka
+    restart: always
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://explorer_kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ZOOKEEPER_CONNECT: explorer_zookeeper:2181
+    depends_on:
+      - explorer_zookeeper
+    networks:
+      - dev_network
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  explorer_redis:
+    image: redis
+    container_name: explorer_redis
+    ports:
+      - 6379:6379
+    command: redis-server --appendonly yes --requirepass redispassword
+    
+  ######################## 错误信息worker
+  explorer_worker_err:
+    image: explorer_python_base:dev
+    command: python /www/explorer_s_common/mq/mq_worker.py sys_error
+    container_name: explorer_worker_err
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_zookeeper
+      - explorer_kafka
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ######################## 慢请求worker
+  explorer_worker_slow_request:
+    image: explorer_python_base:dev
+    command: python /www/explorer_s_common/mq/mq_worker.py slow_request
+    container_name: explorer_worker_slow_request
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_zookeeper
+      - explorer_kafka
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ######################## 请求日志worker
+  explorer_worker_request_log:
+    image: explorer_python_base:dev
+    command: python /www/explorer_s_common/mq/mq_worker.py request_log
+    container_name: explorer_worker_request_log
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_zookeeper
+      - explorer_kafka
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ######################## 发送短信send_sms
+  explorer_worker_send_sms:
+    image: explorer_python_base:dev
+    command: python /www/explorer_s_common/mq/mq_worker.py send_sms
+    container_name: explorer_worker_send_sms
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_zookeeper
+      - explorer_kafka
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ######################## 发送邮件send_email
+  explorer_worker_send_email:
+    image: explorer_python_base:dev
+    command: python /www/explorer_s_common/mq/mq_worker.py send_email
+    container_name: explorer_worker_send_email
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_zookeeper
+      - explorer_kafka
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+
+  ######################## 定时同步任务
+  explorer_cron_sync_data:
+    image: explorer_python_base:dev
+    container_name: explorer_cron_sync_data
+    command: python /www/explorer_s_common/cron/sync_data.py
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_s_pool
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_cron_sync_browser_data:
+    image: explorer_python_base:dev
+    container_name: explorer_cron_sync_browser_data
+    command: python /www/explorer_s_common/cron/sync_browser_data.py
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_s_pool
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_cron_sync_miner_data:
+    image: explorer_python_base:dev
+    container_name: explorer_cron_sync_miner_data
+    command: python /www/explorer_s_common/cron/sync_miner_data.py
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+    networks:
+      - dev_network
+    depends_on:
+      - explorer_s_pool
+    logging: 
+      driver: "json-file"
+      options: 
+        max-size: "500m"
+  explorer_cron_explorer_v2_sync_data:
+    build:
+      context: .
+      dockerfile: Dockerfile_python_explorer
+    container_name: explorer_cron_explorer_v2_sync_data
+    command: python /www/explorer_s_explorer_v2/cron_sync_data.py
+    env_file:
+      - dev.env
+    restart: always
+    volumes:
+      - ./explorer_s_common:/www/explorer_s_common:cached
+      - ./explorer_s_explorer_v2:/www/explorer_s_explorer_v2:cached
+    networks:
+      - dev_network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "500m"
+
+# 网络配置
+networks:
+  dev_network:
+    external:
+      name: dev_network

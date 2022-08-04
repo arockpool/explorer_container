@@ -1,0 +1,45 @@
+# 选择基础镜像
+FROM node:12 as builder
+RUN apt-get update -y && apt-get install build-essential gdb nasm vim -y
+# 设置镜像源为淘宝
+RUN npm config set registry https://registry.npm.taobao.org \
+    && npm config set disturl https://npm.taobao.org/dist 
+# RUN npm i npm@latest -g
+
+# 进入前后端工作目录安装依赖包
+WORKDIR /app/frontend
+COPY ./arockpool_admin/frontend/package.json .
+RUN npm install
+
+WORKDIR /app/backend
+COPY ./arockpool_admin/backend/package.json .
+# RUN npm install 
+RUN npm install 
+COPY ./arockpool_admin/backend .
+
+# 进入前端工作目录编译静态文件
+WORKDIR /app/frontend
+COPY ./arockpool_admin/frontend .
+RUN npm run build
+
+######################## 二次构建
+FROM node:12
+
+# 设置镜像源为淘宝
+RUN npm config set registry https://registry.npm.taobao.org \
+    && npm config set disturl https://npm.taobao.org/dist \ 
+    && npm install pm2 -g
+
+# 进入后端工作目录
+WORKDIR /app/backend
+# 复制后端代码
+COPY --from=builder /app/backend .
+
+# 修改时区
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+EXPOSE 3000
+
+# 启动服务
+# CMD pm2-runtime /app/backend/pm2.json
+# docker build -f Dockerfile_build -t zg_admin:latest .

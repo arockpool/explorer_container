@@ -1,0 +1,11 @@
+# 选择编译镜像
+FROM explorer_go_base:dev
+
+# 创建工作目录
+WORKDIR /go/src/app
+
+# 复制代码
+COPY ./explorer_api .
+
+# 安装依赖并编译
+RUN go build -v -o api
